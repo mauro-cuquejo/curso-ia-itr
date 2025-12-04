@@ -1,0 +1,31 @@
+{
+  "name": "itr-dashboard-app",
+  "version": "1.0.0",
+  "description": "ITR Dashboard App - Sistema completo de autenticación y gestión de usuarios",
+  "main": "index.js",
+  "scripts": {
+    "predev": "cp env.example .env",
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && SKIP_PREFLIGHT_CHECK=true npm start",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start",
+    "setup": "npm run install-all && npm run predev",
+    "install-all": "npm install && cd frontend && npm install --legacy-peer-deps && cd ../backend && npm install",
+    "clean": "rm -rf node_modules frontend/node_modules backend/node_modules",
+    "reset": "npm run clean && npm run setup",
+    "test": "cd backend && npm test && cd ../frontend && npm test",
+    "lint": "cd backend && npm run lint && cd ../frontend && npm run lint",
+    "status": "echo 'Backend:' && curl -s http://localhost:5000/health && echo '\\nFrontend:' && curl -s http://localhost:3000"
+  },
+  "keywords": ["itr", "dashboard", "react", "node", "express", "authentication"],
+  "author": "ITR Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "9.0.1"
+  },
+  "engines": {
+    "node": "20.17.0",
+    "npm": "10.8.2"
+  }
+}
