@@ -1,9 +1,9 @@
 /**
  * Componente principal del Dashboard
- * 
+ *
  * @description Dashboard principal con estadísticas, gráficos y resumen
  * de la aplicación ITR con diseño glass morphism.
- * 
+ *
  * @author ITR Team
  * @since 1.0.0
  */
@@ -42,6 +42,7 @@ import {
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { styled } from '@mui/system';
 
 // Importar estilos y tema
 import { glassStyles } from '../../styles/glassStyles';
@@ -53,10 +54,10 @@ import { useGetSystemMetricsQuery } from '../../store/api/apiSlice';
 
 /**
  * Componente de tarjeta de estadística
- * 
+ *
  * @component StatCard
  * @description Tarjeta con estadística individual
- * 
+ *
  * @param {Object} props - Props del componente
  * @param {string} props.title - Título de la estadística
  * @param {string|number} props.value - Valor de la estadística
@@ -104,7 +105,7 @@ function StatCard({ title, value, subtitle, icon, color = itrColors.primary.blue
               />
             )}
           </Box>
-          
+
           {subtitle && (
             <Typography variant="body2" color="text.secondary">
               {subtitle}
@@ -118,10 +119,10 @@ function StatCard({ title, value, subtitle, icon, color = itrColors.primary.blue
 
 /**
  * Componente de actividad reciente
- * 
+ *
  * @component RecentActivity
  * @description Lista de actividades recientes del sistema
- * 
+ *
  * @returns {JSX.Element} Lista de actividades
  */
 function RecentActivity() {
@@ -210,21 +211,53 @@ function RecentActivity() {
   );
 }
 
+const StatsCard = styled(Card)(({ theme }) => ({
+  borderRadius: '8px',
+  padding: theme.spacing(2.5),
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  color: '#fff',
+  boxShadow: '0 4px 15px rgba(102, 126, 234, 0.2)',
+  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+  '&:hover': {
+    transform: 'translateY(-2px)',
+    boxShadow: '0 6px 20px rgba(102, 126, 234, 0.3)',
+  },
+}));
+
+const MetricCard = styled(Card)(({ theme }) => ({
+  borderRadius: '8px',
+  padding: theme.spacing(2.5),
+  backgroundColor: '#fff',
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+  transition: 'box-shadow 0.2s ease',
+  '&:hover': {
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.12)',
+  },
+}));
+
+const ChartContainer = styled(Card)(({ theme }) => ({
+  borderRadius: '8px',
+  padding: theme.spacing(3),
+  backgroundColor: '#fff',
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+}));
+
 /**
  * Componente principal del Dashboard
- * 
+ *
  * @component DashboardMain
  * @description Dashboard principal con estadísticas y resumen
- * 
+ *
  * @returns {JSX.Element} Dashboard principal
- * 
+ *
  * @since 1.0.0
  */
 function DashboardMain() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { loading, stats } = useSelector((state) => state.dashboard || { loading: false, stats: null });
-  const { data: systemMetrics, refetch: refetchSystem, isFetching: isFetchingSystem } = useGetSystemMetricsQuery(undefined, { skip: !user });
+  const systemMetricsQuery = useGetSystemMetricsQuery(undefined, { skip: !user }) || {};
+  const { data: systemMetrics, refetch: refetchSystem = () => { }, isFetching: isFetchingSystem } = systemMetricsQuery;
 
   // Cargar estadísticas del dashboard
   useEffect(() => {
@@ -273,7 +306,7 @@ function DashboardMain() {
             trend={mockStats.usersGrowth}
           />
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Usuarios Activos"
@@ -284,7 +317,7 @@ function DashboardMain() {
             trend={5.2}
           />
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Sesiones Totales"
@@ -295,7 +328,7 @@ function DashboardMain() {
             trend={mockStats.sessionsGrowth}
           />
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Uptime del Sistema"
@@ -333,17 +366,17 @@ function DashboardMain() {
                     <Typography variant="body2">CPU Usage</Typography>
                     <Typography variant="body2">{systemMetrics?.data?.host?.cpu_usage_percent ?? 0}%</Typography>
                   </Box>
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={systemMetrics?.data?.host?.cpu_usage_percent ?? 0} 
-                    sx={{ 
-                      height: 8, 
+                  <LinearProgress
+                    variant="determinate"
+                    value={systemMetrics?.data?.host?.cpu_usage_percent ?? 0}
+                    sx={{
+                      height: 8,
                       borderRadius: 4,
                       backgroundColor: 'rgba(64, 82, 196, 0.1)',
                       '& .MuiLinearProgress-bar': {
                         backgroundColor: itrColors.primary.blue,
                       },
-                    }} 
+                    }}
                   />
                 </Box>
 
@@ -352,17 +385,17 @@ function DashboardMain() {
                     <Typography variant="body2">Memoria RAM</Typography>
                     <Typography variant="body2">{systemMetrics?.data?.host?.memory_usage_percent ?? 0}%</Typography>
                   </Box>
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={systemMetrics?.data?.host?.memory_usage_percent ?? 0} 
-                    sx={{ 
-                      height: 8, 
+                  <LinearProgress
+                    variant="determinate"
+                    value={systemMetrics?.data?.host?.memory_usage_percent ?? 0}
+                    sx={{
+                      height: 8,
                       borderRadius: 4,
                       backgroundColor: 'rgba(128, 54, 218, 0.1)',
                       '& .MuiLinearProgress-bar': {
                         backgroundColor: itrColors.primary.purple,
                       },
-                    }} 
+                    }}
                   />
                 </Box>
 
@@ -371,17 +404,17 @@ function DashboardMain() {
                     <Typography variant="body2">Almacenamiento</Typography>
                     <Typography variant="body2">{systemMetrics?.data?.host?.disk?.used_percent ?? 0}%</Typography>
                   </Box>
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={systemMetrics?.data?.host?.disk?.used_percent ?? 0} 
-                    sx={{ 
-                      height: 8, 
+                  <LinearProgress
+                    variant="determinate"
+                    value={systemMetrics?.data?.host?.disk?.used_percent ?? 0}
+                    sx={{
+                      height: 8,
                       borderRadius: 4,
                       backgroundColor: 'rgba(97, 182, 221, 0.1)',
                       '& .MuiLinearProgress-bar': {
                         backgroundColor: itrColors.primary.light,
                       },
-                    }} 
+                    }}
                   />
                 </Box>
 

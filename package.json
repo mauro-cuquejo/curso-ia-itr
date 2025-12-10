@@ -4,7 +4,7 @@
   "description": "ITR Dashboard App - Sistema completo de autenticación y gestión de usuarios",
   "main": "index.js",
   "scripts": {
-    "predev": "copyfiles env.example .env || echo .env already exists",
+    "predev": "test -f .env || cp env.example .env || true",
     "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
     "server": "cd backend && npm run dev",
     "client": "cd frontend && npm start",
@@ -30,8 +30,6 @@
   "license": "MIT",
   "devDependencies": {
     "concurrently": "9.0.1",
-    "copyfiles": "^2.4.1",
-    "cross-env": "^7.0.3",
     "rimraf": "^5.0.5"
   },
   "engines": {

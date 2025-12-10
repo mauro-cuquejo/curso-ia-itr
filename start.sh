@@ -40,8 +40,12 @@ fi
 # Paso 1: Crear archivo .env si no existe
 log_info "Configurando variables de entorno..."
 if [ ! -f ".env" ]; then
-    cp env.example .env
-    log_success "Archivo .env creado desde env.example"
+    if [ -f "env.example" ]; then
+        cp env.example .env
+        log_success "Archivo .env creado desde env.example"
+    else
+        log_warning "No se encontró env.example para crear .env"
+    fi
 else
     log_warning "Archivo .env ya existe, no se sobrescribirá"
 fi
@@ -113,15 +117,15 @@ npm run dev
 cleanup() {
     echo ""
     log_info "Deteniendo servicios..."
-    
+
     # Matar procesos en puertos específicos
     lsof -ti:5000 | xargs kill -9 2>/dev/null || true
     lsof -ti:3000 | xargs kill -9 2>/dev/null || true
-    
+
     # Matar procesos por nombre
     pkill -f "nodemon" 2>/dev/null || true
     pkill -f "react-scripts" 2>/dev/null || true
-    
+
     log_success "Servicios detenidos"
     exit 0
 }

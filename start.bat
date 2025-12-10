@@ -16,8 +16,14 @@ if not exist "package.json" (
 REM Paso 1: Crear archivo .env si no existe
 echo ℹ️ Configurando variables de entorno...
 if not exist ".env" (
-    copy env.example .env >nul
-    echo ✅ Archivo .env creado desde env.example
+    if exist "env.example" (
+        copy "env.example" ".env"
+        echo ✅ Archivo .env creado desde env.example
+    ) else (
+        echo ❌ No se encuentra env.example. No se pudo crear el archivo .env
+        pause
+        exit /b 1
+    )
 ) else (
     echo ⚠️ Archivo .env ya existe, no se sobrescribirá
 )
@@ -25,11 +31,11 @@ if not exist ".env" (
 REM Paso 2: Crear .env para frontend
 echo ℹ️ Configurando frontend...
 if not exist "frontend\.env" (
-    echo SKIP_PREFLIGHT_CHECK=true > frontend\.env
-    echo GENERATE_SOURCEMAP=false >> frontend\.env
-    echo FAST_REFRESH=true >> frontend\.env
-    echo REACT_APP_API_URL=http://localhost:5000/api >> frontend\.env
-    echo REACT_APP_APP_NAME=ITR Dashboard >> frontend\.env
+    echo SKIP_PREFLIGHT_CHECK=true > "frontend\.env"
+    echo GENERATE_SOURCEMAP=false >> "frontend\.env"
+    echo FAST_REFRESH=true >> "frontend\.env"
+    echo REACT_APP_API_URL=http://localhost:5000/api >> "frontend\.env"
+    echo REACT_APP_APP_NAME=ITR Dashboard >> "frontend\.env"
     echo ✅ Archivo .env del frontend creado
 ) else (
     echo ⚠️ Archivo .env del frontend ya existe
