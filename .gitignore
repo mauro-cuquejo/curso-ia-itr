@@ -22,6 +22,9 @@ backend/build/
 *.sqlite
 *.sqlite3
 backend/database/*.db
+*.db-journal
+*.sqlite-shm
+*.sqlite-wal
 
 # Logs & runtime data
 logs
