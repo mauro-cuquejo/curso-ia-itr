@@ -1,10 +1,10 @@
 /**
  * Controlador del Dashboard
- * 
+ *
  * @description Maneja todas las operaciones relacionadas con el dashboard:
  * estadísticas generales, actividad reciente, usuarios conectados y
  * métricas del sistema. Proporciona datos consolidados para la interfaz.
- * 
+ *
  * @author ITR Team
  * @since 1.0.0
  */
@@ -14,17 +14,17 @@ const { User, UserSession, UserProfile, AuditLog } = require('../models');
 
 /**
  * Obtiene estadísticas generales del dashboard
- * 
+ *
  * @async
  * @function getStats
  * @description Retorna estadísticas generales del sistema incluyendo
  * usuarios totales, activos, conectados y métricas de crecimiento
- * 
+ *
  * @param {Object} req - Objeto de petición Express
  * @param {Object} res - Objeto de respuesta Express
- * 
+ *
  * @returns {Promise<void>} Respuesta JSON con estadísticas del dashboard
- * 
+ *
  * @example
  * // GET /api/dashboard/stats
  * // Response: {
@@ -35,9 +35,9 @@ const { User, UserSession, UserProfile, AuditLog } = require('../models');
  * //     "growth": {...}
  * //   }
  * // }
- * 
+ *
  * @throws {500} Error interno del servidor
- * 
+ *
  * @since 1.0.0
  * @author ITR Team
  */
@@ -69,12 +69,12 @@ async function getStats(req, res, next) {
       User.count({ where: { created_at: { [Op.gte]: last24Hours } } }),
       User.count({ where: { created_at: { [Op.gte]: last7Days } } }),
       User.count({ where: { created_at: { [Op.gte]: thisMonth } } }),
-      User.count({ 
-        where: { 
-          created_at: { 
-            [Op.between]: [lastMonth, thisMonth] 
-          } 
-        } 
+      User.count({
+        where: {
+          created_at: {
+            [Op.between]: [lastMonth, thisMonth]
+          }
+        }
       })
     ]);
 
@@ -108,7 +108,7 @@ async function getStats(req, res, next) {
     });
 
     // Cálculo de crecimiento mensual
-    const monthlyGrowthRate = newUsersLastMonth > 0 
+    const monthlyGrowthRate = newUsersLastMonth > 0
       ? ((newUsersThisMonth - newUsersLastMonth) / newUsersLastMonth * 100).toFixed(2)
       : newUsersThisMonth > 0 ? 100 : 0;
 
@@ -181,20 +181,20 @@ async function getStats(req, res, next) {
 
 /**
  * Obtiene lista de usuarios conectados
- * 
+ *
  * @async
  * @function getOnlineUsers
  * @description Retorna lista de usuarios actualmente conectados
  * con información de sus sesiones activas
- * 
+ *
  * @param {Object} req - Objeto de petición Express
  * @param {Object} req.query - Parámetros de consulta
  * @param {number} [req.query.limit=20] - Límite de resultados
- * 
+ *
  * @param {Object} res - Objeto de respuesta Express
- * 
+ *
  * @returns {Promise<void>} Respuesta JSON con usuarios conectados
- * 
+ *
  * @example
  * // GET /api/dashboard/users?limit=10
  * // Response: {
@@ -204,9 +204,9 @@ async function getStats(req, res, next) {
  * //     "total_online": 5
  * //   }
  * // }
- * 
+ *
  * @throws {500} Error interno del servidor
- * 
+ *
  * @since 1.0.0
  * @author ITR Team
  */
@@ -245,13 +245,13 @@ async function getOnlineUsers(req, res, next) {
     const processedUsers = onlineUsers.map(user => {
       const userData = user.toJSON();
       const latestSession = userData.sessions[0];
-      
+
       return {
         id: userData.id,
         name: `${userData.first_name} ${userData.last_name}`,
         email: userData.email,
         last_login: userData.last_login,
-        location: userData.profile ? 
+        location: userData.profile ?
           `${userData.profile.city || ''}, ${userData.profile.country || ''}`.replace(/^, |, $/, '') || null
           : null,
         session_info: {
@@ -290,21 +290,21 @@ async function getOnlineUsers(req, res, next) {
 
 /**
  * Obtiene actividad reciente del sistema
- * 
+ *
  * @async
  * @function getRecentActivity
  * @description Retorna lista de actividades recientes del sistema
  * incluyendo logins, registros y modificaciones importantes
- * 
+ *
  * @param {Object} req - Objeto de petición Express
  * @param {Object} req.query - Parámetros de consulta
  * @param {number} [req.query.limit=50] - Límite de resultados
  * @param {string} [req.query.type] - Tipo de actividad a filtrar
- * 
+ *
  * @param {Object} res - Objeto de respuesta Express
- * 
+ *
  * @returns {Promise<void>} Respuesta JSON con actividad reciente
- * 
+ *
  * @example
  * // GET /api/dashboard/activity?limit=20&type=login
  * // Response: {
@@ -314,9 +314,9 @@ async function getOnlineUsers(req, res, next) {
  * //     "total_shown": 20
  * //   }
  * // }
- * 
+ *
  * @throws {500} Error interno del servidor
- * 
+ *
  * @since 1.0.0
  * @author ITR Team
  */
@@ -365,7 +365,7 @@ async function getRecentActivity(req, res, next) {
     // Procesar actividades para mostrar información legible
     const processedActivities = activities.map(activity => {
       const activityData = activity.toJSON();
-      
+
       // Determinar tipo de actividad y descripción
       let activityType = 'unknown';
       let description = activity.getActionDescription();
@@ -415,7 +415,7 @@ async function getRecentActivity(req, res, next) {
         },
         metadata: {
           ip_address: activityData.ip_address,
-          user_agent: activityData.user_agent ? 
+          user_agent: activityData.user_agent ?
             activity.getDeviceInfo() : null
         },
         timestamp: activityData.created_at,
@@ -443,17 +443,17 @@ async function getRecentActivity(req, res, next) {
 
 /**
  * Obtiene métricas de rendimiento del sistema
- * 
+ *
  * @async
  * @function getSystemMetrics
  * @description Retorna métricas de rendimiento del sistema incluyendo
  * uso de base de datos, sesiones activas y estadísticas de API
- * 
+ *
  * @param {Object} req - Objeto de petición Express
  * @param {Object} res - Objeto de respuesta Express
- * 
+ *
  * @returns {Promise<void>} Respuesta JSON con métricas del sistema
- * 
+ *
  * @example
  * // GET /api/dashboard/system-metrics
  * // Response: {
@@ -464,9 +464,9 @@ async function getRecentActivity(req, res, next) {
  * //     "api": {...}
  * //   }
  * // }
- * 
+ *
  * @throws {500} Error interno del servidor
- * 
+ *
  * @since 1.0.0
  * @author ITR Team
  */
@@ -499,18 +499,57 @@ async function getSystemMetrics(req, res, next) {
     });
 
     const getDiskUsage = () => new Promise((resolve) => {
-      // macOS/Linux: usar df -k /
-      exec('df -k /', (err, stdout) => {
-        if (err || !stdout) return resolve(null);
-        const lines = stdout.trim().split('\n');
-        if (lines.length < 2) return resolve(null);
-        const parts = lines[1].split(/\s+/);
-        const totalKB = parseInt(parts[1], 10);
-        const usedKB = parseInt(parts[2], 10);
-        const availKB = parseInt(parts[3], 10);
-        const usedPct = totalKB > 0 ? Math.round((usedKB / totalKB) * 100) : null;
-        resolve({ totalKB, usedKB, availKB, usedPct });
-      });
+      const platform = process.platform;
+
+      if (platform === 'win32') {
+        // Windows: usar PowerShell (wmic está deprecado en builds recientes)
+        const psCmd = `powershell -NoProfile -Command "Get-CimInstance Win32_LogicalDisk | Where-Object { $_.DriveType -eq 3 } | Select-Object Name, Size, FreeSpace | ConvertTo-Json"`;
+        exec(psCmd, { encoding: 'utf8' }, (err, stdout) => {
+          if (err || !stdout) return resolve(null);
+          try {
+            const json = JSON.parse(stdout);
+            const entries = Array.isArray(json) ? json : (json ? [json] : []);
+            if (!entries.length) return resolve(null);
+
+            // Agregar todas las unidades locales (DriveType 3)
+            let totalBytes = 0;
+            let freeBytes = 0;
+            for (const d of entries) {
+              const size = parseInt(d.Size, 10);
+              const free = parseInt(d.FreeSpace, 10);
+              if (!isNaN(size) && size > 0) {
+                totalBytes += size;
+                if (!isNaN(free) && free >= 0) freeBytes += free;
+              }
+            }
+
+            if (totalBytes <= 0) return resolve(null);
+            const usedBytes = Math.max(0, totalBytes - freeBytes);
+            const usedPct = Math.round((usedBytes / totalBytes) * 100);
+            resolve({
+              totalKB: Math.floor(totalBytes / 1024),
+              usedKB: Math.floor(usedBytes / 1024),
+              availKB: Math.floor(freeBytes / 1024),
+              usedPct,
+            });
+          } catch (parseErr) {
+            resolve(null);
+          }
+        });
+      } else {
+        // macOS/Linux: usar df -k /
+        exec('df -k /', (err, stdout) => {
+          if (err || !stdout) return resolve(null);
+          const lines = stdout.trim().split('\n');
+          if (lines.length < 2) return resolve(null);
+          const parts = lines[1].split(/\s+/);
+          const totalKB = parseInt(parts[1], 10);
+          const usedKB = parseInt(parts[2], 10);
+          const availKB = parseInt(parts[3], 10);
+          const usedPct = totalKB > 0 ? Math.round((usedKB / totalKB) * 100) : null;
+          resolve({ totalKB, usedKB, availKB, usedPct });
+        });
+      }
     });
 
     const [cpuUsagePercent, disk] = await Promise.all([
@@ -589,7 +628,7 @@ async function getSystemMetrics(req, res, next) {
     });
 
     // Tiempo promedio de sesión en minutos
-    const avgDuration = averageSessionDuration[0]?.avg_duration_seconds 
+    const avgDuration = averageSessionDuration[0]?.avg_duration_seconds
       ? Math.round(averageSessionDuration[0].avg_duration_seconds / 60)
       : 0;
 
@@ -628,7 +667,7 @@ async function getSystemMetrics(req, res, next) {
         api: {
           requests_24h: apiActivity,
           hourly_distribution: hourlyActivity,
-          peak_hour: hourlyActivity.reduce((max, current) => 
+          peak_hour: hourlyActivity.reduce((max, current) =>
             parseInt(current.count) > parseInt(max.count || 0) ? current : max, {}
           )
         },
@@ -649,14 +688,14 @@ async function getSystemMetrics(req, res, next) {
 
 /**
  * Calcula tiempo transcurrido en formato legible
- * 
+ *
  * @function getTimeAgo
  * @description Convierte una fecha en una representación de tiempo transcurrido
- * 
+ *
  * @param {Date} date - Fecha a comparar
- * 
+ *
  * @returns {string} Tiempo transcurrido en formato legible
- * 
+ *
  * @since 1.0.0
  * @author ITR Team
  */
@@ -671,7 +710,7 @@ function getTimeAgo(date) {
   if (diffMinutes < 60) return `Hace ${diffMinutes} minuto${diffMinutes > 1 ? 's' : ''}`;
   if (diffHours < 24) return `Hace ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
   if (diffDays < 7) return `Hace ${diffDays} día${diffDays > 1 ? 's' : ''}`;
-  
+
   return new Date(date).toLocaleDateString('es-ES');
 }
 

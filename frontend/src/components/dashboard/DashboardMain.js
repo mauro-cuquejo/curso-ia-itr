@@ -9,7 +9,7 @@
  */
 
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   Box,
   Grid,
@@ -48,8 +48,6 @@ import { styled } from '@mui/system';
 import { glassStyles } from '../../styles/glassStyles';
 import { itrColors } from '../../styles/theme';
 
-// Importar acciones de Redux
-import { fetchDashboardStats } from '../../store/slices/dashboardSlice';
 import { useGetSystemMetricsQuery } from '../../store/api/apiSlice';
 
 /**
@@ -253,17 +251,25 @@ const ChartContainer = styled(Card)(({ theme }) => ({
  * @since 1.0.0
  */
 function DashboardMain() {
-  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { loading, stats } = useSelector((state) => state.dashboard || { loading: false, stats: null });
   const systemMetricsQuery = useGetSystemMetricsQuery(undefined, { skip: !user }) || {};
-  const { data: systemMetrics, refetch: refetchSystem = () => { }, isFetching: isFetchingSystem } = systemMetricsQuery;
+  const {
+    data: systemMetrics,
+    refetch: refetchSystem = () => { },
+    isFetching: isFetchingSystem,
+    isLoading: isLoadingSystem,
+    error: errorSystem,
+  } = systemMetricsQuery;
+
+  const cpuUsage = systemMetrics?.data?.host?.cpu_usage_percent ?? 0;
+  const memoryUsage = systemMetrics?.data?.host?.memory_usage_percent ?? 0;
+  const storageUsage = systemMetrics?.data?.host?.disk?.used_percent ?? 0;
 
   // Cargar estadísticas del dashboard
   useEffect(() => {
-    // Simular carga de estadísticas
-    // En una implementación real, aquí se haría dispatch(fetchDashboardStats())
-  }, [dispatch]);
+    // Aquí se podría disparar fetchDashboardStats cuando se conecte al backend
+  }, []);
 
   // Datos simulados para el dashboard
   const mockStats = {
@@ -364,11 +370,11 @@ function DashboardMain() {
                 <Box sx={{ mb: 3 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                     <Typography variant="body2">CPU Usage</Typography>
-                    <Typography variant="body2">{systemMetrics?.data?.host?.cpu_usage_percent ?? 0}%</Typography>
+                    <Typography variant="body2">{cpuUsage}%</Typography>
                   </Box>
                   <LinearProgress
                     variant="determinate"
-                    value={systemMetrics?.data?.host?.cpu_usage_percent ?? 0}
+                    value={cpuUsage}
                     sx={{
                       height: 8,
                       borderRadius: 4,
@@ -383,11 +389,11 @@ function DashboardMain() {
                 <Box sx={{ mb: 3 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                     <Typography variant="body2">Memoria RAM</Typography>
-                    <Typography variant="body2">{systemMetrics?.data?.host?.memory_usage_percent ?? 0}%</Typography>
+                    <Typography variant="body2">{memoryUsage}%</Typography>
                   </Box>
                   <LinearProgress
                     variant="determinate"
-                    value={systemMetrics?.data?.host?.memory_usage_percent ?? 0}
+                    value={memoryUsage}
                     sx={{
                       height: 8,
                       borderRadius: 4,
@@ -402,11 +408,11 @@ function DashboardMain() {
                 <Box sx={{ mb: 3 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                     <Typography variant="body2">Almacenamiento</Typography>
-                    <Typography variant="body2">{systemMetrics?.data?.host?.disk?.used_percent ?? 0}%</Typography>
+                    <Typography variant="body2">{storageUsage}%</Typography>
                   </Box>
                   <LinearProgress
                     variant="determinate"
-                    value={systemMetrics?.data?.host?.disk?.used_percent ?? 0}
+                    value={storageUsage}
                     sx={{
                       height: 8,
                       borderRadius: 4,
@@ -424,10 +430,15 @@ function DashboardMain() {
                   fullWidth
                   sx={glassStyles.buttonSecondary}
                   onClick={() => refetchSystem()}
-                  disabled={isFetchingSystem}
+                  disabled={isFetchingSystem || isLoadingSystem}
                 >
-                  {isFetchingSystem ? 'Actualizando...' : 'Actualizar Métricas'}
+                  {isFetchingSystem || isLoadingSystem ? 'Actualizando...' : 'Actualizar Métricas'}
                 </Button>
+                {errorSystem && (
+                  <Typography variant="caption" color="error" sx={{ display: 'block', mt: 1 }}>
+                    No se pudieron cargar las métricas. Intenta nuevamente.
+                  </Typography>
+                )}
               </CardContent>
             </Card>
           </motion.div>
