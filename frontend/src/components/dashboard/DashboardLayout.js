@@ -8,9 +8,9 @@
  * @since 1.0.0
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Drawer,
@@ -59,12 +59,25 @@ const drawerWidth = 280;
 function DashboardLayout({ children }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useSelector((state) => state.auth);
   const { sidebarOpen } = useSelector((state) => state.ui);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState('dashboard');
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/dashboard/users')) {
+      setActiveMenu('users');
+    } else if (location.pathname.startsWith('/dashboard/analytics')) {
+      setActiveMenu('reports');
+    } else if (location.pathname.startsWith('/dashboard/settings')) {
+      setActiveMenu('settings');
+    } else if (location.pathname.startsWith('/dashboard')) {
+      setActiveMenu('dashboard');
+    }
+  }, [location.pathname]);
 
   /**
    * Maneja el logout del usuario
@@ -102,7 +115,7 @@ function DashboardLayout({ children }) {
       label: 'Dashboard',
       icon: <DashboardIcon />,
       path: '/dashboard',
-      active: true,
+      active: false,
     },
     {
       id: 'users',
@@ -171,7 +184,7 @@ function DashboardLayout({ children }) {
           >
             <ListItem disablePadding sx={{ mb: 1 }}>
               <ListItemButton
-                selected={item.active}
+                selected={location.pathname.startsWith(item.path)}
                 sx={{
                   borderRadius: 2,
                   '&.Mui-selected': {
@@ -185,6 +198,7 @@ function DashboardLayout({ children }) {
                     backgroundColor: 'rgba(64, 82, 196, 0.05)',
                   },
                 }}
+                onClick={() => navigate(item.path)}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   {item.icon}
@@ -272,9 +286,10 @@ function DashboardLayout({ children }) {
       {menuItems.map((item) => (
         <SidebarItem
           key={item.id}
-          active={activeMenu === item.id}
+          active={location.pathname.startsWith(item.path)}
           onClick={() => {
             setActiveMenu(item.id);
+            navigate(item.path);
             setMobileOpen(false);
           }}
         >
