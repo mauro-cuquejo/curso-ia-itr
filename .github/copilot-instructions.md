@@ -21,10 +21,21 @@ Este archivo contiene el contexto y las instrucciones prácticas para que un age
 - Iniciar solo backend: `npm run server` (desde la raíz invoca `cd backend && npm run dev`).
 
 4) Convenciones y patrones del proyecto
+
+Backend:
 - Backend usa CommonJS; frontend usa ES modules.
 - Modelos Sequelize en `backend/models` y asociaciones inicializadas por `models.initializeAssociations()` (ver `models/index.js`).
 - Controladores en `backend/controllers` siguen patrón MVC y son usados directamente por rutas en `backend/routes`.
 - Validaciones de entrada usan `express-validator` (ej.: `backend/routes/auth.js`).
+
+Frontend - Estructura de componentes:
+- **Páginas** (`frontend/src/pages/`): Componentes que representan rutas completas de la aplicación. Cada página corresponde a una ruta en `App.js`.
+  - Ejemplo: `LoginPage.js`, `DashboardPage.js`, `UsersPage.js`
+  - NUNCA crear páginas inline en `App.js` — siempre crear archivos separados en `pages/`
+- **Componentes** (`frontend/src/components/`): Componentes reutilizables que se usan dentro de páginas u otros componentes.
+  - Ejemplo: `LoginForm.js`, `DashboardLayout.js`, `UserTable.js`
+  - Organizar por dominio: `components/auth/`, `components/dashboard/`, etc.
+- **Regla de oro**: Si representa una ruta → va en `pages/`. Si es reutilizable → va en `components/`.
 
 5) Puntos de integración y comportamiento externo
 - La ruta del archivo SQLite viene de `backend/config/server.js` — evita hardcodear rutas en pruebas y migraciones.
