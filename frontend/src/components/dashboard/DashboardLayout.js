@@ -140,109 +140,6 @@ function DashboardLayout({ children }) {
     },
   ];
 
-  /**
-   * Componente del sidebar
-   */
-  const Sidebar = () => (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      {/* Logo y título */}
-      <Box sx={{ p: 3, textAlign: 'center' }}>
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Typography
-            variant="h5"
-            component="div"
-            sx={{
-              fontWeight: 700,
-              background: `linear-gradient(135deg, ${itrColors.primary.blue}, ${itrColors.primary.purple})`,
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              color: 'transparent',
-            }}
-          >
-            ITR Dashboard
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            Sistema de Gestión
-          </Typography>
-        </motion.div>
-      </Box>
-
-      <Divider sx={{ mx: 2 }} />
-
-      {/* Menú de navegación */}
-      <List sx={{ flex: 1, px: 2, py: 1 }}>
-        {menuItems.map((item, index) => (
-          <motion.div
-            key={item.label}
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: index * 0.1, duration: 0.3 }}
-          >
-            <ListItem disablePadding sx={{ mb: 1 }}>
-              <ListItemButton
-                selected={location.pathname.startsWith(item.path)}
-                sx={{
-                  borderRadius: 2,
-                  '&.Mui-selected': {
-                    backgroundColor: 'rgba(64, 82, 196, 0.1)',
-                    border: '1px solid rgba(64, 82, 196, 0.3)',
-                    '&:hover': {
-                      backgroundColor: 'rgba(64, 82, 196, 0.15)',
-                    },
-                  },
-                  '&:hover': {
-                    backgroundColor: 'rgba(64, 82, 196, 0.05)',
-                  },
-                }}
-                onClick={() => navigate(item.path)}
-              >
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.label}
-                  primaryTypographyProps={{
-                    fontSize: '0.9rem',
-                    fontWeight: item.active ? 600 : 400,
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-          </motion.div>
-        ))}
-      </List>
-
-      <Divider sx={{ mx: 2 }} />
-
-      {/* Información del usuario */}
-      <Box sx={{ p: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Avatar
-            sx={{
-              width: 40,
-              height: 40,
-              backgroundColor: itrColors.primary.blue,
-            }}
-          >
-            {user?.first_name?.[0] || 'U'}
-          </Avatar>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography variant="body2" noWrap>
-              {user ? `${user.first_name} ${user.last_name}` : 'Usuario'}
-            </Typography>
-            <Typography variant="caption" color="text.secondary" noWrap>
-              {user?.email || 'usuario@itr.com'}
-            </Typography>
-          </Box>
-        </Box>
-      </Box>
-    </Box>
-  );
-
   const SidebarItem = styled(Box)(({ theme, active }) => ({
     display: 'flex',
     alignItems: 'center',
@@ -286,7 +183,7 @@ function DashboardLayout({ children }) {
       {menuItems.map((item) => (
         <SidebarItem
           key={item.id}
-          active={location.pathname.startsWith(item.path)}
+          active={activeMenu === item.id}
           onClick={() => {
             setActiveMenu(item.id);
             navigate(item.path);
