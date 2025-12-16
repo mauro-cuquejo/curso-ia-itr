@@ -70,7 +70,7 @@ function DashboardLayout({ children }) {
   useEffect(() => {
     if (location.pathname.startsWith('/dashboard/users')) {
       setActiveMenu('users');
-    } else if (location.pathname.startsWith('/dashboard/analytics')) {
+    } else if (location.pathname.startsWith('/dashboard/reports')) {
       setActiveMenu('reports');
     } else if (location.pathname.startsWith('/dashboard/settings')) {
       setActiveMenu('settings');
@@ -128,7 +128,7 @@ function DashboardLayout({ children }) {
       id: 'reports',
       label: 'Reportes',
       icon: <AnalyticsIcon />,
-      path: '/dashboard/analytics',
+      path: '/dashboard/reports',
       active: false,
     },
     {

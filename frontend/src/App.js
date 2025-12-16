@@ -18,11 +18,20 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import UsersPage from './pages/UsersPage';
+import ReportsPage from './pages/ReportsPage';
 
 function DashboardUsersPage() {
   return (
     <DashboardPage>
       <UsersPage />
+    </DashboardPage>
+  );
+}
+
+function DashboardReportsPage() {
+  return (
+    <DashboardPage>
+      <ReportsPage />
     </DashboardPage>
   );
 }
@@ -63,6 +72,12 @@ function App() {
           path="/dashboard/users"
           element={
             isAuthenticated ? <DashboardUsersPage /> : <Navigate to="/login" replace />
+          }
+        />
+        <Route
+          path="/dashboard/reports"
+          element={
+            isAuthenticated ? <DashboardReportsPage /> : <Navigate to="/login" replace />
           }
         />
         <Route
