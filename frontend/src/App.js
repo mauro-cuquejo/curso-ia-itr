@@ -34,7 +34,7 @@ function LoginPage() {
     <Box
       sx={{
         minHeight: '100vh',
-        background: `linear-gradient(135deg, #4052C4 0%, #8036DA 100%)`,
+        bgcolor: 'background.default',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -51,7 +51,7 @@ function RegisterPage() {
     <Box
       sx={{
         minHeight: '100vh',
-        background: `linear-gradient(135deg, #4052C4 0%, #8036DA 100%)`,
+        bgcolor: 'background.default',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

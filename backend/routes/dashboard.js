@@ -1,10 +1,10 @@
 /**
  * Rutas del Dashboard
- * 
+ *
  * @description Define todas las rutas para el dashboard del sistema:
  * estadísticas, usuarios conectados, actividad reciente y métricas.
  * Incluye validaciones y middleware de autenticación.
- * 
+ *
  * @author ITR Team
  * @since 1.0.0
  */
@@ -22,18 +22,18 @@ const {
 } = require('../controllers/dashboardController');
 
 // Importar middleware
-const { 
-  authenticateToken, 
-  logUserActivity 
+const {
+  authenticateToken,
+  logUserActivity
 } = require('../middleware/authMiddleware');
 const { asyncHandler } = require('../middleware/errorMiddleware');
 
 /**
  * Validaciones para parámetros de consulta comunes
- * 
+ *
  * @constant {Array} commonQueryValidations
  * @description Array de validaciones para parámetros de consulta
- * 
+ *
  * @since 1.0.0
  */
 const commonQueryValidations = [
@@ -54,7 +54,7 @@ const commonQueryValidations = [
  * @example
  * GET /api/dashboard/stats
  * Authorization: Bearer jwt_token_here
- * 
+ *
  * @returns {Object} 200 - Estadísticas generales del sistema
  * @returns {Object} 401 - Token inválido o expirado
  * @returns {Object} 500 - Error interno del servidor
@@ -72,7 +72,7 @@ router.get('/stats',
  * @example
  * GET /api/dashboard/users?limit=20
  * Authorization: Bearer jwt_token_here
- * 
+ *
  * @returns {Object} 200 - Lista de usuarios conectados
  * @returns {Object} 400 - Parámetros de consulta inválidos
  * @returns {Object} 401 - Token inválido o expirado
@@ -92,7 +92,7 @@ router.get('/users',
  * @example
  * GET /api/dashboard/activity?limit=50&type=login
  * Authorization: Bearer jwt_token_here
- * 
+ *
  * @returns {Object} 200 - Lista de actividades recientes
  * @returns {Object} 400 - Parámetros de consulta inválidos
  * @returns {Object} 401 - Token inválido o expirado
@@ -118,12 +118,30 @@ router.get('/activity',
  * @example
  * GET /api/dashboard/system-metrics
  * Authorization: Bearer jwt_token_here
- * 
+ *
  * @returns {Object} 200 - Métricas del sistema
  * @returns {Object} 401 - Token inválido o expirado
  * @returns {Object} 500 - Error interno del servidor
  */
 router.get('/system-metrics',
+  authenticateToken,
+  logUserActivity,
+  asyncHandler(getSystemMetrics)
+);
+
+/**
+ * @route   GET /api/dashboard/metrics
+ * @desc    Obtener métricas del sistema (ruta adicional)
+ * @access  Privado (requiere autenticación)
+ * @example
+ * GET /api/dashboard/metrics
+ * Authorization: Bearer jwt_token_here
+ *
+ * @returns {Object} 200 - Métricas del sistema
+ * @returns {Object} 401 - Token inválido o expirado
+ * @returns {Object} 500 - Error interno del servidor
+ */
+router.get('/metrics',
   authenticateToken,
   logUserActivity,
   asyncHandler(getSystemMetrics)
@@ -140,7 +158,7 @@ router.get('/system-metrics',
  * @example
  * GET /api/dashboard/info
  * Authorization: Bearer jwt_token_here
- * 
+ *
  * @returns {Object} 200 - Información del dashboard
  * @returns {Object} 401 - Token inválido o expirado
  */
@@ -186,7 +204,7 @@ router.get('/info',
  * @example
  * GET /api/dashboard/health
  * Authorization: Bearer jwt_token_here
- * 
+ *
  * @returns {Object} 200 - Estado del dashboard
  * @returns {Object} 401 - Token inválido o expirado
  */
@@ -194,11 +212,11 @@ router.get('/health',
   authenticateToken,
   asyncHandler(async (req, res) => {
     const { User, UserSession, AuditLog } = require('../models');
-    
+
     try {
       // Verificar conectividad con la base de datos
       await User.findOne({ limit: 1 });
-      
+
       const healthInfo = {
         status: 'healthy',
         timestamp: new Date(),
@@ -246,11 +264,11 @@ router.get('/health',
  * POST /api/dashboard/cleanup
  * Authorization: Bearer jwt_token_here
  * Content-Type: application/json
- * 
+ *
  * {
  *   "tasks": ["expired_sessions", "old_audit_logs"]
  * }
- * 
+ *
  * @returns {Object} 200 - Resultado de las tareas de limpieza
  * @returns {Object} 400 - Tareas inválidas
  * @returns {Object} 401 - Token inválido o expirado
@@ -262,10 +280,10 @@ router.post('/cleanup',
   asyncHandler(async (req, res) => {
     const { tasks = [] } = req.body;
     const { UserSession, AuditLog } = require('../models');
-    
+
     const availableTasks = ['expired_sessions', 'old_audit_logs'];
     const invalidTasks = tasks.filter(task => !availableTasks.includes(task));
-    
+
     if (invalidTasks.length > 0) {
       return res.status(400).json({
         success: false,
@@ -277,7 +295,7 @@ router.post('/cleanup',
     }
 
     const results = {};
-    
+
     if (tasks.includes('expired_sessions')) {
       const cleanedSessions = await UserSession.cleanExpiredSessions();
       results.expired_sessions = {
@@ -285,7 +303,7 @@ router.post('/cleanup',
         status: 'completed'
       };
     }
-    
+
     if (tasks.includes('old_audit_logs')) {
       const cleanedLogs = await AuditLog.cleanOldLogs(365); // 1 año
       results.old_audit_logs = {
@@ -333,7 +351,7 @@ router.post('/cleanup',
  * @example
  * GET /api/dashboard/export?format=json&data=stats,activity
  * Authorization: Bearer jwt_token_here
- * 
+ *
  * @returns {Object} 200 - Datos exportados
  * @returns {Object} 400 - Parámetros de exportación inválidos
  * @returns {Object} 401 - Token inválido o expirado
@@ -346,18 +364,18 @@ router.get('/export',
       .optional()
       .isIn(['json', 'csv'])
       .withMessage('Formato debe ser json o csv'),
-    
+
     query('data')
       .optional()
       .custom((value) => {
         const validData = ['stats', 'users', 'activity', 'metrics'];
         const requestedData = value.split(',');
         const invalidData = requestedData.filter(item => !validData.includes(item.trim()));
-        
+
         if (invalidData.length > 0) {
           throw new Error(`Tipos de datos inválidos: ${invalidData.join(', ')}`);
         }
-        
+
         return true;
       })
   ],
@@ -365,7 +383,7 @@ router.get('/export',
   asyncHandler(async (req, res) => {
     const { format = 'json', data = 'stats' } = req.query;
     const requestedData = data.split(',').map(item => item.trim());
-    
+
     const exportData = {
       exported_at: new Date(),
       exported_by: {
@@ -385,7 +403,7 @@ router.get('/export',
           exportData.data.stats = data.data;
         }
       };
-      await getStats(req, mockRes, () => {});
+      await getStats(req, mockRes, () => { });
     }
 
     if (requestedData.includes('activity')) {
@@ -395,7 +413,7 @@ router.get('/export',
           exportData.data.activity = data.data;
         }
       };
-      await getRecentActivity(req, mockRes, () => {});
+      await getRecentActivity(req, mockRes, () => { });
     }
 
     // Registrar auditoría de exportación
@@ -417,7 +435,7 @@ router.get('/export',
       // Para CSV, simplificar la estructura
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader('Content-Disposition', 'attachment; filename="dashboard_export.csv"');
-      
+
       // Aquí se podría implementar conversión a CSV
       // Por simplicidad, devolvemos JSON con headers CSV
       res.json({

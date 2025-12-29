@@ -1,10 +1,10 @@
 /**
  * Controlador de Usuarios
- * 
+ *
  * @description Maneja todas las operaciones CRUD relacionadas con usuarios:
  * listado, creación, actualización, eliminación y búsqueda. Incluye
  * paginación, filtros, validación de datos y auditoría completa.
- * 
+ *
  * @author ITR Team
  * @since 1.0.0
  */
@@ -17,12 +17,12 @@ const serverConfig = require('../config/server');
 
 /**
  * Obtiene lista paginada de usuarios
- * 
+ *
  * @async
  * @function getUsers
  * @description Retorna lista paginada de usuarios con filtros opcionales,
  * búsqueda por texto y ordenamiento. Incluye información de perfil y sesiones.
- * 
+ *
  * @param {Object} req - Objeto de petición Express
  * @param {Object} req.query - Parámetros de consulta
  * @param {number} [req.query.page=1] - Número de página
@@ -31,11 +31,11 @@ const serverConfig = require('../config/server');
  * @param {string} [req.query.status] - Filtro por estado
  * @param {string} [req.query.sort=created_at] - Campo de ordenamiento
  * @param {string} [req.query.order=DESC] - Dirección de ordenamiento
- * 
+ *
  * @param {Object} res - Objeto de respuesta Express
- * 
+ *
  * @returns {Promise<void>} Respuesta JSON con lista paginada de usuarios
- * 
+ *
  * @example
  * // GET /api/users?page=1&limit=10&search=juan&status=active
  * // Response: {
@@ -45,10 +45,10 @@ const serverConfig = require('../config/server');
  * //     "pagination": {...}
  * //   }
  * // }
- * 
+ *
  * @throws {400} VALIDATION_ERROR - Parámetros de consulta inválidos
  * @throws {500} Error interno del servidor
- * 
+ *
  * @since 1.0.0
  * @author ITR Team
  */
@@ -161,20 +161,20 @@ async function getUsers(req, res, next) {
 
 /**
  * Obtiene un usuario específico por ID
- * 
+ *
  * @async
  * @function getUserById
  * @description Retorna información detallada de un usuario específico
  * incluyendo perfil, sesiones activas y estadísticas
- * 
+ *
  * @param {Object} req - Objeto de petición Express
  * @param {Object} req.params - Parámetros de ruta
  * @param {string} req.params.id - ID del usuario
- * 
+ *
  * @param {Object} res - Objeto de respuesta Express
- * 
+ *
  * @returns {Promise<void>} Respuesta JSON con información del usuario
- * 
+ *
  * @example
  * // GET /api/users/123
  * // Response: {
@@ -185,11 +185,11 @@ async function getUsers(req, res, next) {
  * //     "stats": {...}
  * //   }
  * // }
- * 
+ *
  * @throws {400} INVALID_USER_ID - ID de usuario inválido
  * @throws {404} USER_NOT_FOUND - Usuario no encontrado
  * @throws {500} Error interno del servidor
- * 
+ *
  * @since 1.0.0
  * @author ITR Team
  */
@@ -244,7 +244,7 @@ async function getUserById(req, res, next) {
       days_since_registration: Math.floor(
         (new Date() - new Date(user.created_at)) / (1000 * 60 * 60 * 24)
       ),
-      last_login_days_ago: user.last_login 
+      last_login_days_ago: user.last_login
         ? Math.floor((new Date() - new Date(user.last_login)) / (1000 * 60 * 60 * 24))
         : null
     };
@@ -269,12 +269,12 @@ async function getUserById(req, res, next) {
 
 /**
  * Crea un nuevo usuario
- * 
+ *
  * @async
  * @function createUser
  * @description Crea un nuevo usuario con validación de datos y
  * creación automática de perfil básico
- * 
+ *
  * @param {Object} req - Objeto de petición Express
  * @param {Object} req.body - Datos del nuevo usuario
  * @param {string} req.body.email - Email único del usuario
@@ -284,11 +284,11 @@ async function getUserById(req, res, next) {
  * @param {string} [req.body.phone] - Teléfono opcional
  * @param {string} [req.body.status=active] - Estado del usuario
  * @param {Object} req.user - Usuario que realiza la acción (para auditoría)
- * 
+ *
  * @param {Object} res - Objeto de respuesta Express
- * 
+ *
  * @returns {Promise<void>} Respuesta JSON con usuario creado
- * 
+ *
  * @example
  * // POST /api/users
  * // Body: {
@@ -297,11 +297,11 @@ async function getUserById(req, res, next) {
  * //   "first_name": "Ana",
  * //   "last_name": "García"
  * // }
- * 
+ *
  * @throws {400} VALIDATION_ERROR - Datos de entrada inválidos
  * @throws {409} EMAIL_EXISTS - Email ya registrado
  * @throws {500} Error interno del servidor
- * 
+ *
  * @since 1.0.0
  * @author ITR Team
  */
@@ -321,8 +321,8 @@ async function createUser(req, res, next) {
     const { email, password, first_name, last_name, phone, status = 'active' } = req.body;
 
     // Verificar si el email ya existe
-    const existingUser = await User.findOne({ 
-      where: { email: email.toLowerCase() } 
+    const existingUser = await User.findOne({
+      where: { email: email.toLowerCase() }
     });
 
     if (existingUser) {
@@ -387,31 +387,31 @@ async function createUser(req, res, next) {
 
 /**
  * Actualiza un usuario existente
- * 
+ *
  * @async
  * @function updateUser
  * @description Actualiza los datos de un usuario existente con validación
  * y registro de auditoría de cambios
- * 
+ *
  * @param {Object} req - Objeto de petición Express
  * @param {Object} req.params - Parámetros de ruta
  * @param {string} req.params.id - ID del usuario a actualizar
  * @param {Object} req.body - Datos a actualizar
  * @param {Object} req.user - Usuario que realiza la acción
- * 
+ *
  * @param {Object} res - Objeto de respuesta Express
- * 
+ *
  * @returns {Promise<void>} Respuesta JSON con usuario actualizado
- * 
+ *
  * @example
  * // PUT /api/users/123
  * // Body: { "first_name": "Juan Carlos", "status": "inactive" }
- * 
+ *
  * @throws {400} VALIDATION_ERROR - Datos de entrada inválidos
  * @throws {404} USER_NOT_FOUND - Usuario no encontrado
  * @throws {409} EMAIL_EXISTS - Email ya registrado por otro usuario
  * @throws {500} Error interno del servidor
- * 
+ *
  * @since 1.0.0
  * @author ITR Team
  */
@@ -459,7 +459,7 @@ async function updateUser(req, res, next) {
     // Verificar email único si se está actualizando
     if (updateData.email && updateData.email.toLowerCase() !== user.email) {
       const existingUser = await User.findOne({
-        where: { 
+        where: {
           email: updateData.email.toLowerCase(),
           id: { [Op.ne]: userId }
         }
@@ -523,30 +523,30 @@ async function updateUser(req, res, next) {
 
 /**
  * Elimina un usuario (soft delete)
- * 
+ *
  * @async
  * @function deleteUser
  * @description Realiza soft delete de un usuario, manteniendo
  * el registro para auditoría pero marcándolo como eliminado
- * 
+ *
  * @param {Object} req - Objeto de petición Express
  * @param {Object} req.params - Parámetros de ruta
  * @param {string} req.params.id - ID del usuario a eliminar
  * @param {Object} req.user - Usuario que realiza la acción
- * 
+ *
  * @param {Object} res - Objeto de respuesta Express
- * 
+ *
  * @returns {Promise<void>} Respuesta JSON confirmando eliminación
- * 
+ *
  * @example
  * // DELETE /api/users/123
  * // Response: { "success": true, "message": "Usuario eliminado exitosamente" }
- * 
+ *
  * @throws {400} INVALID_USER_ID - ID de usuario inválido
  * @throws {404} USER_NOT_FOUND - Usuario no encontrado
  * @throws {403} CANNOT_DELETE_SELF - No se puede eliminar a sí mismo
  * @throws {500} Error interno del servidor
- * 
+ *
  * @since 1.0.0
  * @author ITR Team
  */
@@ -618,12 +618,12 @@ async function deleteUser(req, res, next) {
 
 /**
  * Busca usuarios con filtros avanzados
- * 
+ *
  * @async
  * @function searchUsers
  * @description Búsqueda avanzada de usuarios con múltiples filtros
  * y opciones de ordenamiento
- * 
+ *
  * @param {Object} req - Objeto de petición Express
  * @param {Object} req.query - Parámetros de búsqueda
  * @param {string} [req.query.q] - Término de búsqueda general
@@ -631,30 +631,30 @@ async function deleteUser(req, res, next) {
  * @param {string} [req.query.country] - Filtro por país
  * @param {string} [req.query.city] - Filtro por ciudad
  * @param {string} [req.query.online] - Solo usuarios online
- * 
+ *
  * @param {Object} res - Objeto de respuesta Express
- * 
+ *
  * @returns {Promise<void>} Respuesta JSON con resultados de búsqueda
- * 
+ *
  * @example
  * // GET /api/users/search?q=juan&status=active&country=España
- * 
+ *
  * @throws {400} VALIDATION_ERROR - Parámetros de búsqueda inválidos
  * @throws {500} Error interno del servidor
- * 
+ *
  * @since 1.0.0
  * @author ITR Team
  */
 async function searchUsers(req, res, next) {
   try {
-    const { 
-      q, 
-      status, 
-      country, 
-      city, 
+    const {
+      q,
+      status,
+      country,
+      city,
       online,
-      page = 1, 
-      limit = 20 
+      page = 1,
+      limit = 20
     } = req.query;
 
     // Construir condiciones de búsqueda
@@ -746,11 +746,26 @@ async function searchUsers(req, res, next) {
   }
 }
 
+async function getUserCount(req, res, next) {
+  try {
+    const userCount = await User.count();
+    res.json({
+      success: true,
+      data: {
+        count: userCount
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   getUsers,
   getUserById,
   createUser,
   updateUser,
   deleteUser,
-  searchUsers
+  searchUsers,
+  getUserCount
 };

@@ -162,7 +162,7 @@ export const theme = createTheme({
   // TIPOGRAFÍA
   // ======================
   typography: {
-    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    fontFamily: '"Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     h1: {
       fontSize: '2.25rem',
       fontWeight: 700,

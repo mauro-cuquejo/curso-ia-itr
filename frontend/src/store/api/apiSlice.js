@@ -1,8 +1,8 @@
 /**
  * API Slice con RTK Query
- * 
+ *
  * @description Configuración de RTK Query para todas las APIs del sistema.
- * 
+ *
  * @author ITR Team
  * @since 1.0.0
  */
@@ -34,7 +34,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Auth'],
     }),
-    
+
     register: builder.mutation({
       query: (userData) => ({
         url: '/auth/register',
@@ -43,7 +43,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Auth'],
     }),
-    
+
     logout: builder.mutation({
       query: () => ({
         url: '/auth/logout',
@@ -51,24 +51,30 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Auth'],
     }),
-    
-    // Users endpoints
-    getUsers: builder.query({
-      query: (params) => ({
-        url: '/users',
-        params,
-      }),
-      providesTags: ['User'],
-    }),
-    
-    // Dashboard endpoints
+
+    // Dashboard
     getDashboardStats: builder.query({
       query: () => '/dashboard/stats',
       providesTags: ['Dashboard'],
     }),
+
     getSystemMetrics: builder.query({
-      query: () => '/dashboard/system-metrics',
+      query: () => '/dashboard/metrics',
       providesTags: ['Dashboard'],
+    }),
+
+    // Users
+    getUserCount: builder.query({
+      query: () => '/users/count',
+      providesTags: ['User'],
+    }),
+
+    getUsers: builder.query({
+      query: (params = {}) => ({
+        url: '/users',
+        params,
+      }),
+      providesTags: ['User'],
     }),
   }),
 });
@@ -80,4 +86,5 @@ export const {
   useGetUsersQuery,
   useGetDashboardStatsQuery,
   useGetSystemMetricsQuery,
+  useGetUserCountQuery,
 } = apiSlice;

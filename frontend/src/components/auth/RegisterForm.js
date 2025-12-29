@@ -26,8 +26,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
-import { glassStyles } from '../../styles/glassStyles';
-import { itrColors } from '../../styles/theme';
+// Estilos planos locales para evitar efectos glass/gradiente en auth
 import { useRegisterMutation } from '../../store/api/apiSlice';
 import { registerSuccess } from '../../store/slices/authSlice';
 
@@ -77,20 +76,27 @@ function RegisterForm() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-      <Card sx={{ ...glassStyles.formContainer, maxWidth: 480, width: '100%' }}>
+      <Card
+        elevation={1}
+        sx={{
+          maxWidth: 480,
+          width: '100%',
+          backgroundColor: 'background.paper',
+          backdropFilter: 'none',
+          WebkitBackdropFilter: 'none',
+          border: '1px solid',
+          borderColor: 'divider',
+          boxShadow: (theme) => theme.shadows[1],
+          '&:hover': { transform: 'none', boxShadow: (theme) => theme.shadows[1] },
+        }}
+      >
         <CardContent sx={{ p: 4 }}>
           <Box textAlign="center" mb={4}>
             <Typography
               variant="h4"
               component="h1"
               gutterBottom
-              sx={{
-                fontWeight: 700,
-                background: `linear-gradient(135deg, ${itrColors.primary.blue}, ${itrColors.primary.purple})`,
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                color: 'transparent',
-              }}
+              sx={{ fontWeight: 700, color: 'text.primary' }}
             >
               Crear cuenta
             </Typography>
@@ -115,7 +121,14 @@ function RegisterForm() {
                       </InputAdornment>
                     ),
                   }}
-                  sx={{ mb: 2 }}
+                  sx={{
+                    mb: 2,
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'background.paper',
+                      backdropFilter: 'none',
+                      WebkitBackdropFilter: 'none',
+                    },
+                  }}
                 />
               )}
             />
@@ -137,7 +150,14 @@ function RegisterForm() {
                       </InputAdornment>
                     ),
                   }}
-                  sx={{ mb: 2 }}
+                  sx={{
+                    mb: 2,
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'background.paper',
+                      backdropFilter: 'none',
+                      WebkitBackdropFilter: 'none',
+                    },
+                  }}
                 />
               )}
             />
@@ -160,7 +180,14 @@ function RegisterForm() {
                       </InputAdornment>
                     ),
                   }}
-                  sx={{ mb: 2 }}
+                  sx={{
+                    mb: 2,
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'background.paper',
+                      backdropFilter: 'none',
+                      WebkitBackdropFilter: 'none',
+                    },
+                  }}
                 />
               )}
             />
@@ -190,7 +217,14 @@ function RegisterForm() {
                       </InputAdornment>
                     ),
                   }}
-                  sx={{ mb: 3 }}
+                  sx={{
+                    mb: 3,
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'background.paper',
+                      backdropFilter: 'none',
+                      WebkitBackdropFilter: 'none',
+                    },
+                  }}
                 />
               )}
             />
@@ -202,7 +236,11 @@ function RegisterForm() {
               fullWidth
               disabled={isLoading}
               startIcon={isLoading ? <CircularProgress size={20} /> : <RegisterIcon />}
-              sx={glassStyles.buttonPrimary}
+              disableElevation
+              sx={{
+                backgroundColor: 'primary.main',
+                '&:hover': { backgroundColor: 'primary.dark' },
+              }}
             >
               {isLoading ? 'Registrando...' : 'Crear Cuenta'}
             </Button>

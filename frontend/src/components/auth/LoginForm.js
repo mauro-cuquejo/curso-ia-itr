@@ -36,8 +36,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 // Importar estilos y tema
-import { glassStyles } from '../../styles/glassStyles';
-import { itrColors } from '../../styles/theme';
+// Estilos planos locales para evitar efectos glass/gradiente en auth
 
 // Importar acciones de Redux
 import { loginUser } from '../../store/slices/authSlice';
@@ -118,7 +117,20 @@ function LoginForm() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card sx={{ ...glassStyles.formContainer, maxWidth: 400, width: '100%' }}>
+      <Card
+        elevation={1}
+        sx={{
+          maxWidth: 400,
+          width: '100%',
+          backgroundColor: 'background.paper',
+          backdropFilter: 'none',
+          WebkitBackdropFilter: 'none',
+          border: '1px solid',
+          borderColor: 'divider',
+          boxShadow: (theme) => theme.shadows[1],
+          '&:hover': { transform: 'none', boxShadow: (theme) => theme.shadows[1] },
+        }}
+      >
         <CardContent sx={{ p: 4 }}>
           {/* Header */}
           <Box textAlign="center" mb={4}>
@@ -127,17 +139,11 @@ function LoginForm() {
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, duration: 0.3 }}
             >
-              <Typography 
-                variant="h3" 
-                component="h1" 
-                gutterBottom 
-                sx={{ 
-                  fontWeight: 700,
-                  background: `linear-gradient(135deg, ${itrColors.primary.blue}, ${itrColors.primary.purple})`,
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  color: 'transparent',
-                }}
+              <Typography
+                variant="h3"
+                component="h1"
+                gutterBottom
+                sx={{ fontWeight: 700, color: 'text.primary' }}
               >
                 ITR Dashboard
               </Typography>
@@ -183,7 +189,14 @@ function LoginForm() {
                       </InputAdornment>
                     ),
                   }}
-                  sx={{ mb: 3 }}
+                  sx={{
+                    mb: 3,
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'background.paper',
+                      backdropFilter: 'none',
+                      WebkitBackdropFilter: 'none',
+                    },
+                  }}
                 />
               )}
             />
@@ -219,7 +232,14 @@ function LoginForm() {
                       </InputAdornment>
                     ),
                   }}
-                  sx={{ mb: 4 }}
+                  sx={{
+                    mb: 4,
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'background.paper',
+                      backdropFilter: 'none',
+                      WebkitBackdropFilter: 'none',
+                    },
+                  }}
                 />
               )}
             />
@@ -232,7 +252,11 @@ function LoginForm() {
               fullWidth
               disabled={loading || !isValid}
               startIcon={loading ? <CircularProgress size={20} /> : <LoginIcon />}
-              sx={glassStyles.buttonPrimary}
+              disableElevation
+              sx={{
+                backgroundColor: 'primary.main',
+                '&:hover': { backgroundColor: 'primary.dark' },
+              }}
             >
               {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
             </Button>
@@ -246,10 +270,7 @@ function LoginForm() {
                 variant="text"
                 size="small"
                 onClick={() => navigate('/register')}
-                sx={{ 
-                  color: itrColors.primary.blue,
-                  textTransform: 'none',
-                }}
+                sx={{ color: 'primary.main', textTransform: 'none' }}
               >
                 Regístrate aquí
               </Button>

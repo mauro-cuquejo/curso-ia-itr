@@ -4,10 +4,10 @@
   "description": "ITR Dashboard App - Sistema completo de autenticación y gestión de usuarios",
   "main": "index.js",
   "scripts": {
-    "predev": "cp env.example .env",
+    "predev": "node -e \"const fs=require('fs'); if(!fs.existsSync('.env')){fs.copyFileSync('env.example','.env'); console.log('✅ .env creado desde env.example');} else {console.log('ℹ️ .env ya existe, no se modifica');}\"",
     "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
     "server": "cd backend && npm run dev",
-    "client": "cd frontend && SKIP_PREFLIGHT_CHECK=true npm start",
+    "client": "cd frontend && npm start",
     "build": "cd frontend && npm run build",
     "start": "cd backend && npm start",
     "setup": "npm run install-all && npm run predev",
@@ -18,7 +18,14 @@
     "lint": "cd backend && npm run lint && cd ../frontend && npm run lint",
     "status": "echo 'Backend:' && curl -s http://localhost:5000/health && echo '\\nFrontend:' && curl -s http://localhost:3000"
   },
-  "keywords": ["itr", "dashboard", "react", "node", "express", "authentication"],
+  "keywords": [
+    "itr",
+    "dashboard",
+    "react",
+    "node",
+    "express",
+    "authentication"
+  ],
   "author": "ITR Team",
   "license": "MIT",
   "devDependencies": {

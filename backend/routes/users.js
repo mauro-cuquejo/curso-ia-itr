@@ -1,10 +1,10 @@
 /**
  * Rutas de Usuarios
- * 
+ *
  * @description Define todas las rutas para la gestión de usuarios:
  * CRUD completo, búsqueda, filtros y operaciones administrativas.
  * Incluye validaciones de entrada y middleware de autorización.
- * 
+ *
  * @author ITR Team
  * @since 1.0.0
  */
@@ -20,24 +20,25 @@ const {
   createUser,
   updateUser,
   deleteUser,
-  searchUsers
+  searchUsers,
+  getUserCount
 } = require('../controllers/userController');
 
 // Importar middleware
-const { 
-  authenticateToken, 
+const {
+  authenticateToken,
   requireRole,
   requireOwnership,
-  logUserActivity 
+  logUserActivity
 } = require('../middleware/authMiddleware');
 const { asyncHandler } = require('../middleware/errorMiddleware');
 
 /**
  * Validaciones para creación de usuario
- * 
+ *
  * @constant {Array} createUserValidations
  * @description Array de validaciones para crear usuarios
- * 
+ *
  * @since 1.0.0
  */
 const createUserValidations = [
@@ -47,27 +48,27 @@ const createUserValidations = [
     .normalizeEmail()
     .isLength({ min: 5, max: 255 })
     .withMessage('El email debe tener entre 5 y 255 caracteres'),
-  
+
   body('password')
     .isLength({ min: 6, max: 255 })
     .withMessage('La contraseña debe tener al menos 6 caracteres')
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
     .withMessage('La contraseña debe contener al menos una minúscula, una mayúscula y un número'),
-  
+
   body('first_name')
     .trim()
     .isLength({ min: 1, max: 100 })
     .withMessage('El nombre debe tener entre 1 y 100 caracteres')
     .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
     .withMessage('El nombre solo puede contener letras y espacios'),
-  
+
   body('last_name')
     .trim()
     .isLength({ min: 1, max: 100 })
     .withMessage('El apellido debe tener entre 1 y 100 caracteres')
     .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
     .withMessage('El apellido solo puede contener letras y espacios'),
-  
+
   body('phone')
     .optional()
     .isMobilePhone(['es-ES'])
@@ -81,10 +82,10 @@ const createUserValidations = [
 
 /**
  * Validaciones para actualización de usuario
- * 
+ *
  * @constant {Array} updateUserValidations
  * @description Array de validaciones para actualizar usuarios
- * 
+ *
  * @since 1.0.0
  */
 const updateUserValidations = [
@@ -99,7 +100,7 @@ const updateUserValidations = [
     .normalizeEmail()
     .isLength({ min: 5, max: 255 })
     .withMessage('El email debe tener entre 5 y 255 caracteres'),
-  
+
   body('first_name')
     .optional()
     .trim()
@@ -107,7 +108,7 @@ const updateUserValidations = [
     .withMessage('El nombre debe tener entre 1 y 100 caracteres')
     .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
     .withMessage('El nombre solo puede contener letras y espacios'),
-  
+
   body('last_name')
     .optional()
     .trim()
@@ -115,7 +116,7 @@ const updateUserValidations = [
     .withMessage('El apellido debe tener entre 1 y 100 caracteres')
     .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
     .withMessage('El apellido solo puede contener letras y espacios'),
-  
+
   body('phone')
     .optional()
     .isMobilePhone(['es-ES'])
@@ -129,10 +130,10 @@ const updateUserValidations = [
 
 /**
  * Validaciones para parámetros de consulta
- * 
+ *
  * @constant {Array} queryValidations
  * @description Array de validaciones para parámetros de consulta
- * 
+ *
  * @since 1.0.0
  */
 const queryValidations = [
@@ -140,22 +141,22 @@ const queryValidations = [
     .optional()
     .isInt({ min: 1 })
     .withMessage('Página debe ser un número entero positivo'),
-  
+
   query('limit')
     .optional()
     .isInt({ min: 1, max: 100 })
     .withMessage('Límite debe ser un número entre 1 y 100'),
-  
+
   query('status')
     .optional()
     .isIn(['active', 'inactive', 'suspended'])
     .withMessage('Estado inválido'),
-  
+
   query('sort')
     .optional()
     .isIn(['created_at', 'updated_at', 'first_name', 'last_name', 'email', 'last_login'])
     .withMessage('Campo de ordenamiento inválido'),
-  
+
   query('order')
     .optional()
     .isIn(['ASC', 'DESC'])
@@ -173,7 +174,7 @@ const queryValidations = [
  * @example
  * GET /api/users?page=1&limit=10&search=juan&status=active&sort=created_at&order=DESC
  * Authorization: Bearer jwt_token_here
- * 
+ *
  * @returns {Object} 200 - Lista paginada de usuarios
  * @returns {Object} 400 - Parámetros de consulta inválidos
  * @returns {Object} 401 - Token inválido o expirado
@@ -187,13 +188,24 @@ router.get('/',
 );
 
 /**
+ * @route   GET /api/users/count
+ * @desc    Obtener conteo total de usuarios
+ * @access  Privado
+ */
+router.get('/count',
+  authenticateToken,
+  logUserActivity,
+  asyncHandler(getUserCount)
+);
+
+/**
  * @route   GET /api/users/search
  * @desc    Búsqueda avanzada de usuarios
  * @access  Privado (requiere autenticación)
  * @example
  * GET /api/users/search?q=juan&status=active&country=España&online=true
  * Authorization: Bearer jwt_token_here
- * 
+ *
  * @returns {Object} 200 - Resultados de búsqueda
  * @returns {Object} 400 - Parámetros de búsqueda inválidos
  * @returns {Object} 401 - Token inválido o expirado
@@ -223,7 +235,7 @@ router.get('/search',
  * @example
  * GET /api/users/123
  * Authorization: Bearer jwt_token_here
- * 
+ *
  * @returns {Object} 200 - Información detallada del usuario
  * @returns {Object} 400 - ID de usuario inválido
  * @returns {Object} 401 - Token inválido o expirado
@@ -253,7 +265,7 @@ router.get('/:id',
  * POST /api/users
  * Authorization: Bearer jwt_token_here
  * Content-Type: application/json
- * 
+ *
  * {
  *   "email": "nuevo@example.com",
  *   "password": "Password123",
@@ -262,7 +274,7 @@ router.get('/:id',
  *   "phone": "+34600000000",
  *   "status": "active"
  * }
- * 
+ *
  * @returns {Object} 201 - Usuario creado exitosamente
  * @returns {Object} 400 - Datos de entrada inválidos
  * @returns {Object} 401 - Token inválido o expirado
@@ -286,13 +298,13 @@ router.post('/',
  * PUT /api/users/123
  * Authorization: Bearer jwt_token_here
  * Content-Type: application/json
- * 
+ *
  * {
  *   "first_name": "Juan Carlos",
  *   "phone": "+34600000001",
  *   "status": "inactive"
  * }
- * 
+ *
  * @returns {Object} 200 - Usuario actualizado exitosamente
  * @returns {Object} 400 - Datos de entrada inválidos
  * @returns {Object} 401 - Token inválido o expirado
@@ -316,7 +328,7 @@ router.put('/:id',
  * @example
  * DELETE /api/users/123
  * Authorization: Bearer jwt_token_here
- * 
+ *
  * @returns {Object} 200 - Usuario eliminado exitosamente
  * @returns {Object} 400 - ID de usuario inválido
  * @returns {Object} 401 - Token inválido o expirado
@@ -347,7 +359,7 @@ router.delete('/:id',
  * @example
  * GET /api/users/123/profile
  * Authorization: Bearer jwt_token_here
- * 
+ *
  * @returns {Object} 200 - Perfil del usuario
  * @returns {Object} 401 - Token inválido o expirado
  * @returns {Object} 403 - Permisos insuficientes
@@ -401,14 +413,14 @@ router.get('/:id/profile',
  * PUT /api/users/123/profile
  * Authorization: Bearer jwt_token_here
  * Content-Type: application/json
- * 
+ *
  * {
  *   "bio": "Nueva biografía",
  *   "country": "España",
  *   "city": "Madrid",
  *   "language": "es"
  * }
- * 
+ *
  * @returns {Object} 200 - Perfil actualizado exitosamente
  * @returns {Object} 400 - Datos de entrada inválidos
  * @returns {Object} 401 - Token inválido o expirado
@@ -423,32 +435,32 @@ router.put('/:id/profile',
     param('id')
       .isInt({ min: 1 })
       .withMessage('ID de usuario debe ser un número entero positivo'),
-    
+
     body('bio')
       .optional()
       .isLength({ max: 1000 })
       .withMessage('La biografía no puede exceder 1000 caracteres'),
-    
+
     body('birth_date')
       .optional()
       .isISO8601()
       .withMessage('Fecha de nacimiento debe ser una fecha válida'),
-    
+
     body('gender')
       .optional()
       .isIn(['male', 'female', 'other'])
       .withMessage('Género inválido'),
-    
+
     body('country')
       .optional()
       .isLength({ min: 2, max: 100 })
       .withMessage('País debe tener entre 2 y 100 caracteres'),
-    
+
     body('city')
       .optional()
       .isLength({ min: 2, max: 100 })
       .withMessage('Ciudad debe tener entre 2 y 100 caracteres'),
-    
+
     body('language')
       .optional()
       .isIn(['es', 'en', 'fr', 'de', 'it', 'pt', 'ca'])
@@ -522,7 +534,7 @@ router.put('/:id/profile',
  * @example
  * GET /api/users/stats/summary
  * Authorization: Bearer jwt_token_here
- * 
+ *
  * @returns {Object} 200 - Estadísticas de usuarios
  * @returns {Object} 401 - Token inválido o expirado
  * @returns {Object} 500 - Error interno del servidor
