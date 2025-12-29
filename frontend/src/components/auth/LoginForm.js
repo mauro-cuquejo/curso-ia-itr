@@ -1,9 +1,9 @@
 /**
  * Componente de formulario de login
- * 
+ *
  * @description Formulario de autenticación con validación, diseño glass morphism
  * y integración con Redux para manejo de estado de autenticación.
- * 
+ *
  * @author ITR Team
  * @since 1.0.0
  */
@@ -57,19 +57,19 @@ const loginSchema = yup.object({
 
 /**
  * Componente de formulario de login
- * 
+ *
  * @component LoginForm
  * @description Formulario completo de autenticación con validación
- * 
+ *
  * @returns {JSX.Element} Formulario de login
- * 
+ *
  * @since 1.0.0
  */
 function LoginForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
-  
+
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -87,7 +87,7 @@ function LoginForm() {
 
   /**
    * Maneja el envío del formulario de login
-   * 
+   *
    * @param {Object} data - Datos del formulario
    * @param {string} data.email - Email del usuario
    * @param {string} data.password - Contraseña del usuario
@@ -95,7 +95,7 @@ function LoginForm() {
   const onSubmit = async (data) => {
     try {
       const result = await dispatch(loginUser(data));
-      
+
       if (result.payload?.success) {
         navigate('/dashboard');
       }
@@ -148,7 +148,7 @@ function LoginForm() {
                 ITR Dashboard
               </Typography>
             </motion.div>
-            
+
             <Typography variant="body1" color="text.secondary" mb={2}>
               Inicia sesión en tu cuenta
             </Typography>
@@ -278,7 +278,7 @@ function LoginForm() {
           </Box>
 
           {/* Demo credentials */}
-          <Box mt={2} p={2} sx={{ 
+          <Box mt={2} p={2} sx={{
             backgroundColor: 'rgba(64, 82, 196, 0.1)',
             borderRadius: 2,
             border: '1px solid rgba(255, 255, 255, 0.2)',

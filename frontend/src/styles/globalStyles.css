@@ -1,6 +1,6 @@
 /**
  * Estilos globales para ITR Dashboard
- * 
+ *
  * Reseteo de estilos, variables CSS, animaciones globales
  * y configuraciones base para la aplicación.
  */
@@ -40,7 +40,7 @@ body {
   --itr-primary-blue: #4052C4;
   --itr-primary-purple: #8036DA;
   --itr-primary-light: #61B6DD;
-  
+
   /* Colores Secundarios */
   --itr-secondary-1: #7482DE;
   --itr-secondary-2: #2B3B9B;
@@ -48,29 +48,29 @@ body {
   --itr-secondary-4: #5A1FA3;
   --itr-secondary-5: #A0DAF4;
   --itr-secondary-6: #408FB4;
-  
+
   /* Glass Effect */
   --glass-bg: rgba(64, 82, 196, 0.1);
   --glass-border: rgba(255, 255, 255, 0.2);
   --glass-backdrop: 10px;
-  
+
   /* Estados */
   --status-success: #10B981;
   --status-warning: #F59E0B;
   --status-error: #EF4444;
   --status-info: #3B82F6;
-  
+
   /* Sombras */
   --shadow-sm: 0 1px 3px rgba(64, 82, 196, 0.1);
   --shadow-md: 0 4px 6px rgba(64, 82, 196, 0.1);
   --shadow-lg: 0 10px 15px rgba(64, 82, 196, 0.1);
   --shadow-xl: 0 20px 25px rgba(64, 82, 196, 0.1);
-  
+
   /* Transiciones */
   --transition-fast: 0.15s ease-in-out;
   --transition-normal: 0.3s ease-in-out;
   --transition-slow: 0.5s ease-in-out;
-  
+
   /* Espaciado */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -78,7 +78,7 @@ body {
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
-  
+
   /* Bordes */
   --border-radius-sm: 8px;
   --border-radius-md: 12px;
@@ -281,7 +281,7 @@ body {
   html {
     font-size: 14px;
   }
-  
+
   .glass-card {
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
@@ -303,7 +303,7 @@ body {
     --glass-bg: rgba(64, 82, 196, 0.2);
     --glass-border: rgba(255, 255, 255, 0.4);
   }
-  
+
   .glass-card {
     border-width: 2px;
   }
@@ -319,7 +319,7 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  
+
   .gradient-animate {
     animation: none;
   }
@@ -332,9 +332,9 @@ body {
    =========================== */
 
 .skeleton {
-  background: linear-gradient(90deg, 
-    rgba(255, 255, 255, 0.1) 25%, 
-    rgba(255, 255, 255, 0.2) 50%, 
+  background: linear-gradient(90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
     rgba(255, 255, 255, 0.1) 75%
   );
   background-size: 200px 100%;
@@ -381,7 +381,7 @@ body {
     box-shadow: none !important;
     text-shadow: none !important;
   }
-  
+
   .glass-card {
     border: 1px solid #ccc !important;
   }

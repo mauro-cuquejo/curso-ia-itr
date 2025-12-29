@@ -1,6 +1,6 @@
 /**
  * Componente de formulario de registro
- * 
+ *
  * @component RegisterForm
  * @description Formulario para crear una nueva cuenta. Usa RTK Query para llamar al endpoint
  * de registro y, en caso de éxito, despacha registerSuccess y navega al dashboard.

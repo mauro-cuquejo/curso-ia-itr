@@ -1,10 +1,10 @@
 /**
  * Tema personalizado de Material-UI para ITR Dashboard
- * 
+ *
  * @description Configuración completa del tema con paleta de colores ITR,
  * tipografía, componentes personalizados y efectos glass morphism.
  * Define todos los colores, sombras y estilos del sistema de diseño.
- * 
+ *
  * @author ITR Team
  * @since 1.0.0
  */
@@ -17,10 +17,10 @@ import { createTheme } from '@mui/material/styles';
 
 /**
  * Colores principales del sistema ITR
- * 
+ *
  * @constant {Object} itrColors
  * @description Definición de todos los colores del sistema de diseño ITR
- * 
+ *
  * @since 1.0.0
  */
 export const itrColors = {
@@ -30,7 +30,7 @@ export const itrColors = {
     purple: '#8036DA',    // Morado principal ITR
     light: '#61B6DD',     // Azul claro ITR
   },
-  
+
   // Colores Secundarios
   secondary: {
     1: '#7482DE',
@@ -40,7 +40,7 @@ export const itrColors = {
     5: '#A0DAF4',
     6: '#408FB4',
   },
-  
+
   // Glass Effect Variables
   glass: {
     background: 'rgba(64, 82, 196, 0.1)',
@@ -48,7 +48,7 @@ export const itrColors = {
     backdrop: '10px',
     overlay: 'rgba(128, 54, 218, 0.05)',
   },
-  
+
   // Estados
   status: {
     success: '#10B981',
@@ -56,7 +56,7 @@ export const itrColors = {
     error: '#EF4444',
     info: '#3B82F6',
   },
-  
+
   // Grises
   gray: {
     50: '#F9FAFB',
@@ -74,10 +74,10 @@ export const itrColors = {
 
 /**
  * Configuración de sombras personalizadas
- * 
+ *
  * @constant {Array} customShadows
  * @description Sombras optimizadas para efectos glass morphism
- * 
+ *
  * @since 1.0.0
  */
 const customShadows = [
@@ -88,17 +88,17 @@ const customShadows = [
   '0 20px 25px rgba(64, 82, 196, 0.1), 0 10px 10px rgba(64, 82, 196, 0.04)',
   '0 25px 50px rgba(64, 82, 196, 0.15), 0 12px 24px rgba(64, 82, 196, 0.08)',
   // Continuando con más niveles...
-  ...Array(19).fill(0).map((_, i) => 
+  ...Array(19).fill(0).map((_, i) =>
     `0 ${4 + i * 2}px ${8 + i * 4}px rgba(64, 82, 196, ${0.1 + i * 0.01})`
   )
 ];
 
 /**
  * Tema principal de Material-UI
- * 
+ *
  * @constant {Object} theme
  * @description Configuración completa del tema con todos los componentes personalizados
- * 
+ *
  * @since 1.0.0
  */
 export const theme = createTheme({
@@ -442,10 +442,10 @@ export const theme = createTheme({
 
 /**
  * Estilos adicionales para efectos glass
- * 
+ *
  * @constant {Object} glassEffects
  * @description Estilos CSS para efectos glass morphism reutilizables
- * 
+ *
  * @since 1.0.0
  */
 export const glassEffects = {
@@ -457,7 +457,7 @@ export const glassEffects = {
     borderRadius: 16,
     boxShadow: customShadows[3],
   },
-  
+
   // Glass card intensa
   glassCardIntense: {
     background: 'rgba(255, 255, 255, 0.9)',
@@ -466,19 +466,19 @@ export const glassEffects = {
     borderRadius: 20,
     boxShadow: customShadows[4],
   },
-  
+
   // Glass overlay
   glassOverlay: {
     background: 'rgba(64, 82, 196, 0.1)',
     backdropFilter: 'blur(15px)',
     border: `1px solid ${itrColors.glass.border}`,
   },
-  
+
   // Gradiente principal
   primaryGradient: {
     background: `linear-gradient(135deg, ${itrColors.primary.blue} 0%, ${itrColors.primary.purple} 100%)`,
   },
-  
+
   // Gradiente secundario
   secondaryGradient: {
     background: `linear-gradient(135deg, ${itrColors.primary.light} 0%, ${itrColors.secondary[5]} 100%)`,
@@ -487,10 +487,10 @@ export const glassEffects = {
 
 /**
  * Utilidades de color
- * 
+ *
  * @constant {Object} colorUtils
  * @description Funciones auxiliares para manipular colores
- * 
+ *
  * @since 1.0.0
  */
 export const colorUtils = {
@@ -506,7 +506,7 @@ export const colorUtils = {
     const b = parseInt(hex.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   },
-  
+
   /**
    * Obtiene color de estado
    * @param {string} status - Estado (success, warning, error, info)

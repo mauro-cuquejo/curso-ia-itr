@@ -1,9 +1,9 @@
 /**
  * Componente principal de la aplicación ITR Dashboard
- * 
+ *
  * @description Componente raíz que maneja las rutas principales, autenticación
  * y layout general de la aplicación con efectos glass morphism.
- * 
+ *
  * @author ITR Team
  * @since 1.0.0
  */
@@ -21,12 +21,12 @@ import DashboardMain from './components/dashboard/DashboardMain';
 
 /**
  * Página de Login
- * 
+ *
  * @component LoginPage
  * @description Página de login con formulario completo
- * 
+ *
  * @returns {JSX.Element} Página de login
- * 
+ *
  * @since 1.0.0
  */
 function LoginPage() {
@@ -65,12 +65,12 @@ function RegisterPage() {
 
 /**
  * Página de Dashboard
- * 
+ *
  * @component DashboardPage
  * @description Dashboard completo con layout y contenido
- * 
+ *
  * @returns {JSX.Element} Página de dashboard
- * 
+ *
  * @since 1.0.0
  */
 function DashboardPage() {
@@ -83,12 +83,12 @@ function DashboardPage() {
 
 /**
  * Componente principal de la aplicación
- * 
+ *
  * @component App
  * @description Componente raíz con routing y layout principal
- * 
+ *
  * @returns {JSX.Element} Aplicación completa
- * 
+ *
  * @since 1.0.0
  * @author ITR Team
  */
@@ -99,27 +99,27 @@ function App() {
   return (
     <Box sx={{ minHeight: '100vh' }}>
       <Routes>
-        <Route 
-          path="/login" 
-          element={<LoginPage />} 
+        <Route
+          path="/login"
+          element={<LoginPage />}
         />
-        <Route 
-          path="/register" 
-          element={<RegisterPage />} 
+        <Route
+          path="/register"
+          element={<RegisterPage />}
         />
-        <Route 
-          path="/dashboard" 
+        <Route
+          path="/dashboard"
           element={
             isAuthenticated ? <DashboardPage /> : <Navigate to="/login" replace />
-          } 
+          }
         />
-        <Route 
-          path="/" 
-          element={<Navigate to="/login" replace />} 
+        <Route
+          path="/"
+          element={<Navigate to="/login" replace />}
         />
-        <Route 
-          path="*" 
-          element={<Navigate to="/login" replace />} 
+        <Route
+          path="*"
+          element={<Navigate to="/login" replace />}
         />
       </Routes>
     </Box>
